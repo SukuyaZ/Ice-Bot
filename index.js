@@ -294,6 +294,28 @@ client.on("message", async message => {
   	await member.roles.add(role).catch(console.error)
   	await message.channel.send(`Role ${role} added to ${member}.`)
   }
+  if (command === "newrole") {
+    let roleid = args.slice(0).join(' ');
+    message.guild.roles.create({
+      data: {
+      name: roleid,
+      hoist: true,
+      color: 'BLUE'}
+      }
+      )
+    await message.channel.send(`Role ${roleid} created by ${message.author}`)
+    let channel = message.guild.channels.cache.find(c => c.name === "logs")    
+    const embed = new Discord.MessageEmbed()
+      .setColor("#ed099a")
+      .setTimestamp()
+      .setFooter(message.guild.name, message.guild.iconURL())
+      .setTitle("New Role Created")
+      .setDescription(`Role Created:
+            **> Created by:** ${message.author}
+            **> Created in:** ${message.channel}
+            `);
+    await channel.send(embed)
+  }
 });
 
 client.login(config.token);
