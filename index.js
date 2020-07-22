@@ -1,9 +1,56 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
+const ms = require('ms');
+const moment = require('moment');
+const os = require('os');
 
 /*
  DISCORD.JS VERSION 12 CODE
 */
+const flags = {
+  DISCORD_EMPLOYEE: 'Discord Employee',
+  DISCORD_PARTNER: 'Discord Partner',
+  BUGHUNTER_LEVEL_1: 'Bug Hunter (Level 1)',
+  BUGHUNTER_LEVEL_2: 'Bug Hunter (Level 2)',
+  HYPESQUAD_EVENTS: 'HypeSquad Events',
+  HOUSE_BRAVERY: 'House of Bravery',
+  HOUSE_BRILLIANCE: 'House of Brilliance',
+  HOUSE_BALANCE: 'House of Balance',
+  EARLY_SUPPORTER: 'Early Supporter',
+  TEAM_USER: 'Team User',
+  SYSTEM: 'System',
+  VERIFIED_BOT: 'Verified Bot',
+  VERIFIED_DEVELOPER: 'Verified Bot Developer'
+};
+const filterLevels = {
+  DISABLED: 'Off',
+  MEMBERS_WITHOUT_ROLES: 'No Role',
+  ALL_MEMBERS: 'Everyone'
+};
+
+const verificationLevels = {
+  NONE: 'None',
+  LOW: 'Low',
+  MEDIUM: 'Medium',
+  HIGH: '(╯°□°）╯︵ ┻━┻',
+  VERY_HIGH: '┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻'
+};
+
+const regions = {
+  brazil: 'Brazil',
+  europe: 'Europe',
+  hongkong: 'Hong Kong',
+  india: 'India',
+  japan: 'Japan',
+  russia: 'Russia',
+  singapore: 'Singapore',
+  southafrica: 'South Africa',
+  sydeny: 'Sydeny',
+  'us-central': 'US Central',
+  'us-east': 'US East',
+  'us-west': 'US West',
+  'us-south': 'US South'
+};
 
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
@@ -57,7 +104,17 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if(message.author.bot) return;
-  
+  if(message.channel.type == "dm") {
+    if (message.content.startsWith("Hello") || message.content.startsWith("hello")) {
+      await message.channel.send(`Hello, ${message.author}. `) //what should happen on a dm
+   }
+   else if (message.content.startsWith("Help") || message.content.startsWith("help")){
+    await message.channel.send("Idk if I can send you my help command. Try joining a server with me in it and using the help command!")
+   }
+   else{
+    await message.channel.send("The only words I respond to are Hello and Help. I'll respond to more in the future.")
+   }
+ }
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
   if(!message.content.startsWith(config.prefix)) return;
@@ -74,8 +131,13 @@ client.on("message", async message => {
   if(command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
-    const m = await message.channel.send("Ping?");
-    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`);
+   const msg = await message.channel.send('Pinging...');
+
+    const latency = msg.createdTimestamp - message.createdTimestamp;
+    const choices = ['Is this really my ping?', 'Is this okay? I can\'t look!', 'I hope it isn\'t bad!'];
+    const response = choices[Math.floor(Math.random() * choices.length)];
+
+    msg.edit(`${response} - Bot Latency: \`${latency}ms\`, API Latency: \`${Math.round(client.ws.ping)}ms\``);
   }
   
   if(command === "say") {
@@ -90,7 +152,7 @@ client.on("message", async message => {
   
   if(command === "kick") {
     
-    
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     // Let's first check if we have a member and if we can kick them!
     // message.mentions.members is a collection of people that have been mentioned, as GuildMembers.
     // We can also support getting the member by ID, which would be args[0]
@@ -109,14 +171,20 @@ client.on("message", async message => {
     await member.send(`You've been kicked for ${reason}`)
     await member.kick(reason)
       .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
+    const embed = new Discord.MessageEmbed()
+      .setAuthor("Kicked User")
+      .setDescription(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`)
+      .setFooter("Powered By Ice Bot")
+      .setColor("BLUE")
+    message.channel.send(embed);
+    channel.send(embed)
   }
   
   if(command === "ban") {
     // Most of this command is identical to kick, except that here we'll only let admins do it.
     // In the real world mods could ban too, but this is just an example, right? ;)
     
-    
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     let member = message.mentions.members.first();
     if(!member)
       return message.reply("Please mention a valid member of this server");
@@ -128,7 +196,13 @@ client.on("message", async message => {
     
     await member.ban(reason)
       .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
-    message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+    const embed = new Discord.MessageEmbed()
+      .setAuthor("Success!")
+      .setFooter("Made by Ice Bot")
+      .setColor("BLACK")
+      .setDescription(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`)
+    message.channel.send(embed);
+    channel.send(embed)
   }
   
   if(command === "purge") {
@@ -148,6 +222,7 @@ client.on("message", async message => {
     message.reply(`Successfully purged ${deleteCount} messages`)
   }
   if (command === 'mute') {
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     let user = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
     let guild = Discord.Guild
      let role = message.guild.roles.cache.find(r => r.name == 'Muted');
@@ -173,20 +248,63 @@ client.on("message", async message => {
   
 
     user.roles.add(role);
-    message.channel.send(`Successfully muted ${user}.`);
+    const embed = new Discord.MessageEmbed()
+      .setDescription(`Successfully muted ${user}.`)
+      .setFooter("Made by Ice Bot")
+      .setAuthor("Ice Bot")
+    message.channel.send(embed);
+    channel.send(embed)
+  }
+  if (command === "botinfo") {
+    const core = os.cpus()[0];
+    const embed = new Discord.MessageEmbed()
+      .setThumbnail(client.user.displayAvatarURL())
+      .setColor(message.guild.me.displayHexColor || 'BLUE')
+      .addField('General', [
+        `**❯ Client:** ${client.user.tag} (${client.user.id})`,
+        `**❯ Servers:** ${client.guilds.cache.size.toLocaleString()} `,
+        `**❯ Users:** ${client.guilds.cache.reduce((a, b) => a + b.memberCount, 0).toLocaleString()}`,
+        `**❯ Channels:** ${client.channels.cache.size.toLocaleString()}`,
+        `**❯ Creation Date:** ${client.user.createdTimestamp}`,
+        `**❯ Node.js:** ${process.version}`,
+        '\u200b'
+      ])
+      .addField('System', [
+        `**❯ Platform:** ${process.platform}`,
+        `**❯ Uptime:** ${ms(os.uptime() * 1000, { long: true })}`,
+        `**❯ CPU:**`,
+        `\u3000 Cores: ${os.cpus().length}`,
+        `\u3000 Model: ${core.model}`,
+        `\u3000 Speed: ${core.speed}MHz`,
+        
+      ])
+      .setTimestamp();
+
+    message.channel.send(embed);
+  
+
   }
   if (command === "unmute") {
     let user = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
     let guild = Discord.Guild
     let role = message.guild.roles.cache.find(r => r.name == 'Muted');
     user.roles.remove(role);
-    message.channel.send(`Successfully unmuted ${user}.`);
+    const embed = new Discord.MessageEmbed()
+      .setAuthor("User Muted")
+      .setFooter("Made by Ice Bot")
+      .setColor("GREEN")
+      .setDescription(`Successfully unmuted ${user}.`)
+    message.channel.send(embed);
   }
   if (command === "help") {
-    var botcommands = ["help", " mute", " unmute", " purge", " ban", " kick", " say", " ping", " userinfo", " guildinfo", " dm", " warn", " report", " newadmin"]
+    var botcommands = ["help", " mute", " unmute", " purge", " ban", " kick", " say", " ping", " userinfo", " guildinfo", " dm", " warn", " report", " newadmin", " addrole", " removerole", " newrole"]
     message.channel.send(`My commands are: ${botcommands}`);
   }
+  if (command === "uptime") {
+    message.channel.send(`My uptime is \`${ms(client.uptime, { long: true })}\``);
+  }
   if (command === "unban") {
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     let reason = args.slice(1).join(' ');
     client.unbanReason = reason;
     client.unbanAuth = message.author;
@@ -196,7 +314,13 @@ client.on("message", async message => {
     if (reason.length < 1) return message.reply('You must supply a reason for the unban.');
     if (!user) return message.reply('You must supply a User Resolvable, such as a user id.').catch(console.error);
     message.guild.members.unban(user);
-    await message.channel.send(`${user} was unbanned for ${reason}.`)
+    const embed = new Discord.MessageEmbed()
+      .setAuthor("Unban Successful")
+      .setDescription(`${user} was unbanned for ${reason}.`)
+      .setFooter("Powered by Ice Bot")
+      .setColor(0xE118D2)
+    await message.channel.send(embed)
+    await channel.send(embed)
   }
   if (command === "spam") {
     let user = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
@@ -208,19 +332,94 @@ client.on("message", async message => {
     }
   }
   if (command === "userinfo") {
-    let user = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
-    // var errorprevention = user.roles.map(r => `${r}`).join(' | ')
-    await message.channel.send(`userinfo for ${user.user.tag}:\nID: ${user.user.id}\nName: ${user.user.username}\nStatus: ${user.user.presence.status}\nCreated At: ${user.user.createdAt}\nAvatar: ${user.user.avatarURL()}\nBot: ${user.user.bot}\nJoined this guild at: ${user.joinedAt}\nNick: ${user.nickname}\nLast Message: ${user.lastMessage}`)
+    const member = message.mentions.members.last() || message.guild.members.cache.get(target) || message.member;
+    const roles = member.roles.cache
+      .sort((a, b) => b.position - a.position)
+      .map(role => role.toString())
+      .slice(0, -1);
+    const userFlags = member.user.flags.toArray();
+    const embed = new Discord.MessageEmbed()
+      .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+      .setColor(member.displayHexColor || 'BLUE')
+      .addField('User', [
+        `**❯ Username:** ${member.user.username}`,
+        `**❯ Discriminator:** ${member.user.discriminator}`,
+        `**❯ ID:** ${member.id}`,
+        `**❯ Flags:** ${userFlags.length ? userFlags.map(flag => flags[flag]).join(', ') : 'None'}`,
+        `**❯ Avatar:** [Link to avatar](${member.user.displayAvatarURL({ dynamic: true })})`,
+        `**❯ Time Created:** ${moment(member.user.createdTimestamp).format('LT')} ${moment(member.user.createdTimestamp).format('LL')} ${moment(member.user.createdTimestamp).fromNow()}`,
+        `**❯ Status:** ${member.user.presence.status}`,
+        `**❯ Game:** ${member.user.presence.game || 'Not playing a game.'}`,
+        `\u200b`
+      ])
+      .addField('Member', [
+        `**❯ Highest Role:** ${member.roles.highest.id === message.guild.id ? 'None' : member.roles.highest.name}`,
+        `**❯ Server Join Date:** ${moment(member.joinedAt).format('LL LTS')}`,
+        `**❯ Hoist Role:** ${member.roles.hoist ? member.roles.hoist.name : 'None'}`,
+        `**❯ Roles [${roles.length}]:** ${roles.length < 10 ? roles.join(', ') : roles.length > 10 ? this.client.utils.trimArray(roles) : 'None'}`,
+        `\u200b`
+      ]);
+    return message.channel.send(embed);
+
   }
   if (command === "guildinfo") {
-    let guild = Discord.Guild
-    await message.channel.send(`guildinfo for: ${message.guild}\nName: ${message.guild.name}\nOwner: ${message.guild.owner.user.username}#${message.guild.owner.user.discriminator}\nID: ${message.guild.id}\nTotal | Humans | Bots: ${message.guild.members.cache.size} | ${message.guild.members.cache.filter(member => !member.user.bot).size} | ${message.guild.members.cache.filter(member => member.user.bot).size}\nAvatar: ${message.guild.iconURL()}\n# of Roles: ${message.guild.roles.cache.size}\nCreated At: ${message.channel.guild.createdAt}\nVerification: ${message.guild.verificationLevel}`)
+    const roles = message.guild.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString());
+    const members = message.guild.members.cache;
+    const channels = message.guild.channels.cache;
+    const emojis = message.guild.emojis.cache;
+
+    const embed = new Discord.MessageEmbed()
+      .setDescription(`**Guild information for __${message.guild.name}__**`)
+      .setColor('BLUE')
+      .setThumbnail(message.guild.iconURL({ dynamic: true }))
+      .addField('General', [
+        `**❯ Name:** ${message.guild.name}`,
+        `**❯ ID:** ${message.guild.id}`,
+        `**❯ Owner:** ${message.guild.owner.user.tag} (${message.guild.ownerID})`,
+        `**❯ Region:** ${regions[message.guild.region]}`,
+        `**❯ Boost Tier:** ${message.guild.premiumTier ? `Tier ${message.guild.premiumTier}` : 'None'}`,
+        `**❯ Explicit Filter:** ${filterLevels[message.guild.explicitContentFilter]}`,
+        `**❯ Verification Level:** ${verificationLevels[message.guild.verificationLevel]}`,
+        `**❯ Time Created:** ${moment(message.guild.createdTimestamp).format('LT')} ${moment(message.guild.createdTimestamp).format('LL')} ${moment(message.guild.createdTimestamp).fromNow()}`,
+        '\u200b'
+      ])
+      .addField('Statistics', [
+        `**❯ Role Count:** ${roles.length}`,
+        `**❯ Emoji Count:** ${emojis.size}`,
+        `**❯ Regular Emoji Count:** ${emojis.filter(emoji => !emoji.animated).size}`,
+        `**❯ Animated Emoji Count:** ${emojis.filter(emoji => emoji.animated).size}`,
+        `**❯ Member Count:** ${message.guild.memberCount}`,
+        `**❯ Humans:** ${members.filter(member => !member.user.bot).size}`,
+        `**❯ Bots:** ${members.filter(member => member.user.bot).size}`,
+        `**❯ Text Channels:** ${channels.filter(channel => channel.type === 'text').size}`,
+        `**❯ Voice Channels:** ${channels.filter(channel => channel.type === 'voice').size}`,
+        `**❯ Boost Count:** ${message.guild.premiumSubscriptionCount || '0'}`,
+        '\u200b'
+      ])
+      .addField('Presence', [
+        `**❯ Online:** ${members.filter(member => member.presence.status === 'online').size}`,
+        `**❯ Idle:** ${members.filter(member => member.presence.status === 'idle').size}`,
+        `**❯ Do Not Disturb:** ${members.filter(member => member.presence.status === 'dnd').size}`,
+        `**❯ Offline:** ${members.filter(member => member.presence.status === 'offline').size}`,
+        '\u200b'
+      ])
+      .setTimestamp();
+    message.channel.send(embed);
   }
   if (command === "dm") {
-    let text = args.slice(1).join(' ');
-    let member = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
-    await member.send(text)
-    await message.channel.send(`Message sent to ${member.user.username}`)
+    let user =
+      message.mentions.members.first() ||
+      message.guild.members.cache.get(args[0]);
+    if (!user)
+      return message.channel.send(
+        `You did not mention a user, or you gave an invalid id`
+      );
+    if (!args.slice(1).join(" "))
+      return message.channel.send("You did not specify your message");
+    user.user
+      .send(args.slice(1).join(" "))
+      .catch(() => message.channel.send("That user could not be DMed!"))
+      .then(() => message.channel.send(`Sent a message to ${user.user.tag}`));
   }
   if (command === "report") {
     let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
@@ -252,7 +451,7 @@ client.on("message", async message => {
         await channel.send(embed)
   } 
   if (command === "newadmin") {
-    const channel = message.guild.channels.cache.get("731213331033227397")
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     const member = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
     const role = message.guild.roles.cache.get("728634440481243177");
     /*console.log(role)*/
@@ -262,7 +461,7 @@ client.on("message", async message => {
     await channel.send(`Added ${role.name} to ${member.user.tag}.`)
   }
   if (command === "warn") {
-    let channel = message.guild.channels.cache.get("731213331033227397")
+    let channel = message.guild.channels.cache.find(c => c.name === 'logs')
     let member = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
     const role = message.guild.roles.cache.get("728634450941837383");
     await member.roles.add(role).catch(console.error);
@@ -288,7 +487,10 @@ client.on("message", async message => {
   	let member = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
   	let roleid = args.slice(1).join(' ');
   	let role = message.guild.roles.cache.find(r => r.name === roleid)
-  	if (!member.roles.cache.some(role => role.name === 'Admins')) {
+  	if (!message.guild.roles.cache.some(role => role.name === roleid)){
+      return await message.reply("Role not found! Try again.")
+    }
+    if (!member.roles.cache.some(role => role.name === 'Admins')) {
   		return await message.reply("This command is for admins only!")
   	}
   	await member.roles.add(role).catch(console.error)
@@ -303,7 +505,7 @@ client.on("message", async message => {
       color: 'BLUE'}
       }
       )
-    await message.channel.send(`Role ${roleid} created by ${message.author}`)
+    
     let channel = message.guild.channels.cache.find(c => c.name === "logs")    
     const embed = new Discord.MessageEmbed()
       .setColor("#ed099a")
@@ -315,7 +517,63 @@ client.on("message", async message => {
             **> Created in:** ${message.channel}
             `);
     await channel.send(embed)
+    await message.channel.send(embed)
+    }
+  if (command === "eightball") {
+    var res = [
+    "Yes",
+    "No",
+    "Maybe",
+    "Unlikely",
+    "Of course",
+    "Ask again later",
+    "Umm... No",
+    "Sure why not",
+    "It is decidedly so",
+    "Very likely",
+    "Probably",
+    "Probably not"
+  ]
+  // Runs if user doesn't ask a question
+  if(!args[0]){
+    message.channel.send('Please ask a question.')
+    return;
   }
+  // Creates an ambed and picks a random answer from the answer array
+    let embed = new Discord.MessageEmbed()
+    .addField("Question", args)
+    .addField("Answer", (res[Math.floor(Math.random() * res.length)]))
+    .setColor('42c2f4')
+    message.channel.send(embed)
+    return console.log(`> 8ball command used by ${message.author.username}`);
+  // Displays a message in the console if the command was used
+  }
+  if (command === "delrole") {
+    let channel = message.guild.channels.cache.find(c => c.name === "logs")
+    var deletename =  args.slice(0).join(' ');
+    deletedrole = message.guild.roles.cache.find(role => role.name === deletename).delete();
+    console.log(deletedrole)
+    const embed = new Discord.MessageEmbed()
+      .setAuthor(`Role deleted successfully`)
+      .setFooter("Powered by Ice Bot")
+      .setColor("GREEN")
+      .setDescription(`${message.author} deleted the role ${deletename}.`)
+    await message.channel.send(embed)
+    await channel.send(embed)
+  }
+  if (command === "avatar") {
+    // Using Discord.js Master
+    let user = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);
+    const embed = new Discord.MessageEmbed()
+      .setImage(user.user.displayAvatarURL())
+      .setAuthor(`${user.user.username}'s Avatar`)
+      .setFooter("Powered by Ice Bot")
+      .setColor("BLUE")
+
+    await message.channel.send(embed)
+  }
+
+
 });
 
 client.login(config.token);
