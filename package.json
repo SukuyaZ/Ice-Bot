@@ -10,9 +10,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ascii-table": "0.0.9",
     "discord.js": "^12.2.0",
+    "fs": "0.0.1-security",
+    "imdb-api": "^4.1.1",
     "moment": "^2.27.0",
     "ms": "^2.1.2",
-    "os": "^0.1.1"
+    "novelcovid": "^1.2.7",
+    "os": "^0.1.1",
+    "quick.db": "^7.1.1",
+    "quickdb": "^1.0.5",
+    "request-promise-native": "^1.0.9",
+    "weather-js": "^2.0.0"
   }
 }
