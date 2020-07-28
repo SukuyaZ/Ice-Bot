@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 module.exports = {
 	name: "report",
 	usage: "report <user>",
-	category: "Moderator",
+	category: "moderator",
 	description: "Report a user",
 	run: async (client, message, args) => {
 	let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.fetch(args[0]);

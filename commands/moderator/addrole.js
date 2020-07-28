@@ -2,7 +2,7 @@ const Discord = require("discord.js")
 
 module.exports = {
     name: "addrole",
-    category: "Moderator",
+    category: "moderator",
     description: "Adds a role to a member of the guild!",
     usage: "addrole <user> <role>",
     aliases: ["ar", "roleadd"],

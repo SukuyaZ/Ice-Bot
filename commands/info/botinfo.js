@@ -1,4 +1,6 @@
 const os = require('os')
+const ms = require("ms")
+const Discord = require("discord.js")
 module.exports = {
   name: "botinfo",
   category: 'info',

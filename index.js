@@ -1,12 +1,10 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
-const db = require("quick.db")
 const ms = require('ms');
-const { badwords } = require("./data.json") 
+const fs = require('fs');
 const moment = require('moment');
 const os = require('os');
 const config2 = require('dotenv')
-
 /*
  DISCORD.JS VERSION 12 CODE
 */
@@ -60,6 +58,7 @@ const regions = {
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
+
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 
@@ -74,8 +73,10 @@ client.aliases = new Discord.Collection();
 const config = require("./config.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
+const prefix = config.prefix
 
 client.on("ready", () => {
+  console.log(prefix)
   const activities_list = [
     "with the #help command.",
     "Minecraft",
@@ -94,6 +95,7 @@ client.on("ready", () => {
         client.user.setActivity(activities_list[index]); // sets bot's activities to one of the phrases in the arraylist.
     }, 20000); // Runs this every 20 seconds.
   // This event will run if the bot starts, and logs in, successfully.
+  
   console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
 });
 
@@ -109,21 +111,7 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`Serving ${client.guilds.cache.size} servers`);
 });
 
-client.on("guildMemberAdd", (member) => {
-  let chx = db.get(`welchannel_${member.guild.id}`);
-  
-  if(chx === null) {
-    return;
-  }
 
-  let wembed = new Discord.MessageEmbed()
-  .setAuthor(member.user.username, member.user.avatarURL())
-  .setColor("#ff2050")
-  .setThumbnail(member.user.avatarURL())
-  .setDescription(`We are very happy to have you in our server`);
-  
-  client.channels.cache.get(chx).send(wembed)
-})
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
@@ -131,48 +119,49 @@ client.on("message", async message => {
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
-  if(message.author.bot) return;
+  if(message.author.bot || !message.content.startsWith(config.prefix)) return;
+  
   if(message.channel.type == "dm") {
     if (message.content.startsWith("Hello") || message.content.startsWith("hello")) {
       await message.channel.send(`Hello, ${message.author}. `) //what should happen on a dm
    }
    else if (message.content.startsWith("Help") || message.content.startsWith("help")){
-    await message.channel.send("Idk if I can send you my help command. Try joining a server with me in it and using the help command!")
+    await message.channel.send("Can't send help command in DM")
+   }
+   else if (message.content.includes("you suck") || message.content.includes("You Suck") || message.content.includes("You suck")) {
+     message.channel.send("Be nice! <:sad:737024711535362079>")
+   }
+   else if (message.content.includes("Yay!") || message.content.includes("yay!")) {
+     message.channel.send("Yay! Glad you're happy!")
+   }
+   else if (message.content.includes("You're awesome") || message.content.includes("you're awesome")) {
+     message.channel.send("Why thank you! <:cheer:737026488301518958>")
+   }
+   else if (message.content.includes("your code") || message.content.includes("Your Code") || message.content.includes("Your code")) {
+     message.channel.send("I'm not sending everything, but here is my help command: ", { files: ["./commands/info/help.js"] })
    }
    else{
-    await message.channel.send("The only words I respond to are Hello and Help. I'll respond to more in the future.")
+    await message.channel.send("I do not respond to that phrase.")
    }
  }
+ let blacklist = JSON.parse(fs.readFileSync("C:/Users/Owen Royaol/Desktop/IceBot/commands/moderator/blacklist.json", "utf8"));
+ if (!blacklist[message.author.id]) {
+  blacklist[message.author.id] = {state: false}
+};
+
+if (blacklist[message.author.id].state === true) return await message.reply("NOPE. YOU'RE BLACKLISTED");
  // Get the command
     let command = client.commands.get(cmd);
     // If none is found, try to find it by alias
     if (!command) command = client.commands.get(client.aliases.get(cmd));
 
     // If a command is finally found, run the command
-    if (command) 
+    if (command) {
         command.run(client, message, args);
+    }
   // which is set in the configuration file.
-  if(!message.content.startsWith(config.prefix)) return;
-    let confirm = false;
-    //NOW WE WILL USE FOR LOOP
-    var i;
-    for(i = 0;i < badwords.length; i++) {
-      
-      if(message.content.toLowerCase().includes(badwords[i].toLowerCase()))
-        confirm = true;
-      
-    }
-    
-    if(confirm === true) {
-      message.delete()
-      return message.channel.send("You are not allowed to send badwords here")
-    }
-  
-  // Let's go with a few common example commands! Feel free to delete or change those.
   
   
-
-
 });
 
 client.login(config.token);

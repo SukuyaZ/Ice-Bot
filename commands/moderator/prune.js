@@ -1,3 +1,4 @@
+const Discord = require("discord.js")
 module.exports = {
     run: async(client, message, args) => {
     // This command removes all messages from all users in the channel, up to 100.
@@ -13,12 +14,18 @@ module.exports = {
     const fetched = await message.channel.messages.fetch({limit: deleteCount});
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
-    message.reply(`Successfully purged ${deleteCount} messages`)
+      const embed = new Discord.MessageEmbed()
+      .setAuthor(`${message.author.username}`)
+      .setDescription(`Purged ${deleteCount} messages.`)
+      .setTimestamp()
+      .addField('Action:', 'Purge')
+      .setFooter("Powered by Ice Bot")
+    message.reply({embed})
     },
 
     aliases: ['purge'],
     name: "prune",
-    category: "Moderator",
+    category: "utils",
     usage: "prune <num of messages>",
     description: 'Deletes a number of messages from a user in a channel.'
 }
