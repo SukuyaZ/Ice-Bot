@@ -2,6 +2,7 @@
 const Discord = require("discord.js");
 const ms = require('ms');
 const fs = require('fs');
+const path = require("path");
 const moment = require('moment');
 const os = require('os');
 const config2 = require('dotenv')
@@ -144,8 +145,8 @@ client.on("message", async message => {
     await message.channel.send("I do not respond to that phrase.")
    }
  }
- let blacklist = JSON.parse(fs.readFileSync("C:/Users/Owen Royaol/Desktop/IceBot/commands/moderator/blacklist.json", "utf8"));
- if (!blacklist[message.author.id]) {
+  let blacklist = JSON.parse(fs.readFileSync(path.resolve(__dirname, "commands/moderator/blacklist.json")));
+  if (!blacklist[message.author.id]) {
   blacklist[message.author.id] = {state: false}
 };
 

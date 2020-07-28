@@ -19,9 +19,11 @@
     "ms": "^2.1.2",
     "novelcovid": "^1.2.7",
     "os": "^0.1.1",
+    "path": "0.12.7",
     "request-promise-native": "^1.0.9",
     "something-random-on-discord": "0.0.2",
     "superagent": "^5.3.1",
+    "urban": "0.3.2",
     "weather-js": "^2.0.0"
   }
 }
