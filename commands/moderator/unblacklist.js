@@ -6,7 +6,7 @@ module.exports = {
     usage: 'unblacklist [userid]',
     category: 'moderator',
     run: async (client, message, args) => {
-        let blacklist = JSON.parse(fs.readFileSync("C:/Users/Owen Royaol/Desktop/IceBot/commands/moderator/blacklist.json", "utf8"));
+        let blacklist = JSON.parse(fs.readFileSync("commands/moderator/blacklist.json", "utf8"));
         let user = args[0];
         if(message.author.id !== "466778567905116170") return message.channel.send("This command is Owner-Only!");
         //if (user = "blacklist") return message.reply('You need to imput a User ID');
@@ -27,7 +27,7 @@ module.exports = {
                 state: false
             }
         message.reply("That user have been removed from blacklist");
-        fs.writeFile("C:/Users/Owen Royaol/Desktop/IceBot/commands/moderator/blacklist.json", JSON.stringify(blacklist), err => {
+            fs.writeFile("commands/moderator/blacklist.json", JSON.stringify(blacklist), err => {
             if(err) throw err;
             return;
         });
