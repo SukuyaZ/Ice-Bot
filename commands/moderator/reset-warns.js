@@ -3,16 +3,18 @@ const db = require("quick.db")
 module.exports = {
   name: "resetwarns",
   aliases: ["rwarns"],
+  category: "moderator",
   usage: "rwarns <@user>",
   description: "Reset warnings of mentioned person",
   run: async (client, message, args) => {
     
     
-    if(!message.member.hasPermission("ADMINISTRATOR")) {
-      return message.channel.send("Yopu should have admin perms to use this command")
+    if(!message.member.hasPermission("MANAGE_ROLES")) {
+      return message.channel.send("You should have manage roles perms to use this command")
     }
     
     const user = message.mentions.members.first()
+    const role = message.guild.roles.cache.find(role => role.name === "Warned")
     
     if(!user) {
     return message.channel.send("Please mention the person whose warning you want to reset")
@@ -35,7 +37,7 @@ module.exports = {
     db.delete(`warnings_${message.guild.id}_${user.id}`)
     user.send(`Your all warnings are reseted by ${message.author.username} from ${message.guild.name}`)
     await message.channel.send(`Reseted all warnings of ${message.mentions.users.first().username}`)
-    
+    user.roles.remove(role)
   
     
 }

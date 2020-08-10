@@ -3,13 +3,13 @@ const db = require("quick.db")
 
 module.exports = {
   name: "warn",
-  category: "moderation",
+  category: "moderator",
   usage: "warn <@mention> <reason>",
   description: "Warn anyone who do not obey the rules",
   run: async (client, message, args) => {
     
-    if(!message.member.hasPermission("ADMINISTRATOR")) {
-      return message.channel.send("You should have admin perms to use this command!")
+    if(!message.member.hasPermission("MANAGE_ROLES")) {
+      return message.channel.send("You should have manage roles perms to use this command!")
     }
     
     const user = message.mentions.members.first()
@@ -31,7 +31,8 @@ module.exports = {
     }
     
     const reason = args.slice(1).join(" ")
-    
+    const role = message.guild.roles.cache.find(role => role.name === "Warned");
+
     if(!reason) {
       return message.channel.send("Please provide reason to warn - warn @mention <reason>")
     }
@@ -46,10 +47,12 @@ module.exports = {
       db.set(`warnings_${message.guild.id}_${user.id}`, 1)
       user.send(`You have been warned in **${message.guild.name}** for ${reason}`)
       await message.channel.send(`You warned **${message.mentions.users.first().username}** for ${reason}`)
+      user.roles.add(role)
     } else if(warnings !== null) {
         db.add(`warnings_${message.guild.id}_${user.id}`, 1)
        user.send(`You have been warned in **${message.guild.name}** for ${reason}`)
       await message.channel.send(`You warned **${message.mentions.users.first().username}** for ${reason}`)
+      user.roles.add(role)
     }
     
   

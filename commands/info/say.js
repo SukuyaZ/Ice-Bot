@@ -2,6 +2,7 @@
 module.exports = {
 	name: 'say',
 	category: 'info',
+	aliases: ["echo", "repeat"],
 	description: 'bot says what you say',
 	usage: 'say <message>',
 	run: (client, message, args) => {
