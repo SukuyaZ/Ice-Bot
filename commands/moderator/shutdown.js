@@ -7,7 +7,7 @@ module.exports = {
     accessableby: "Bot Owner",
     aliases: ["botstop"],
     run: async(client, message, args) => {
-        if(message.author.id != "466778567905116170") return message.channel.send("You're the bot the owner!")
+        if(message.author.id != "466778567905116170") return message.channel.send("This command can only be used by the owner :facepalm:")
 
         try {
             await message.channel.send("Bot is shutting down...")

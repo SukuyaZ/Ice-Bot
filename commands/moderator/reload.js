@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const botconfig = require("C:/Users/owenr/Desktop/Ice-Bot/config.json");
+const botconfig = require("/home/nosnowowie/Ice-Bot/config.json");
 module.exports = {
     name: "reload",
     description: "reloads a bot command!",
@@ -9,7 +9,7 @@ module.exports = {
     aliases: ["creload"],
     run: async (client, message, args) => {
 
-    if(message.author.id !== "466778567905116170") return message.channel.send("You're the bot the owner!")
+    if(message.author.id !== "466778567905116170") return message.channel.send("This command can only be used by the bot owner :facepalm:")
 
     if(!args[0]) return message.channel.send("Please provide a command to reload!")
 

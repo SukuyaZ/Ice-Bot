@@ -22,10 +22,9 @@ module.exports = {
     .setColor(0xFF0000)
     .setTimestamp()
     .addField('Action:', 'HackBan')
-    .addField('User:', `${client.users.cache.get(`${args[0]}`).username}#${client.users.cache.get(`${args[0]}`).discriminator} (${user})`)
+    .addField('User:', `${user}`)
     .addField('Moderator:', `${message.author.username}#${message.author.discriminator}`)
     .addField('Reason', reason)
-
   let logchannel = message.guild.channels.cache.find(x => x.name === 'logs').send({embed});
   if  (!logchannel){
   message.channel.send({embed})

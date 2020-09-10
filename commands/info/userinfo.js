@@ -34,7 +34,8 @@ module.exports = {
 	usage: "userinfo <user>",
 	category: "info",
 	run: async (client, message, args) => {
-	const member = message.mentions.members.last() || message.guild.members.cache.get(target) || message.member;
+    let id = args[0]
+	const member = message.mentions.members.last() || message.guild.members.cache.get(id) || message.member;
     const roles = member.roles.cache
       .sort((a, b) => b.position - a.position)
       .map(role => role.toString())

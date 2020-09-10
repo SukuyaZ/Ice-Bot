@@ -1,7 +1,11 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
+const config = require("./config.json");
 const ms = require('ms');
 const fs = require('fs');
+const MusicClient = require('/home/nosnowowie/Ice-Bot/src/struct/Client.js');
+const { Collection } = require('discord.js');
+const client = new MusicClient({ token: config.token, prefix: config.prefix });
 const path = require("path");
 const moment = require('moment');
 const os = require('os');
@@ -58,7 +62,6 @@ const regions = {
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
-const client = new Discord.Client();
 
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
@@ -71,7 +74,6 @@ client.aliases = new Discord.Collection();
 
 
 // Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 const prefix = config.prefix
@@ -111,6 +113,15 @@ client.on("guildDelete", guild => {
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
   client.user.setActivity(`Serving ${client.guilds.cache.size} servers`);
 });
+client.on("error", error => {
+  console.error(`An error has occured: ${error}`)
+});
+client.once('reconnecting', () => {
+  console.log('Reconnecting!');
+ });
+ client.once('disconnect', () => {
+  console.log('Disconnect!');
+ });
 
 
 client.on("message", async message => {
@@ -120,31 +131,8 @@ client.on("message", async message => {
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
-  if(message.author.bot || !message.content.startsWith(config.prefix)) return;
   
-  if(message.channel.type == "dm") {
-    if (message.content.startsWith("Hello") || message.content.startsWith("hello")) {
-      await message.channel.send(`Hello, ${message.author}. `) //what should happen on a dm
-   }
-   else if (message.content.startsWith("Help") || message.content.startsWith("help")){
-    await message.channel.send("Can't send help command in DM")
-   }
-   else if (message.content.includes("you suck") || message.content.includes("You Suck") || message.content.includes("You suck")) {
-     message.channel.send("Be nice! <:sad:737024711535362079>")
-   }
-   else if (message.content.includes("Yay!") || message.content.includes("yay!")) {
-     message.channel.send("Yay! Glad you're happy!")
-   }
-   else if (message.content.includes("You're awesome") || message.content.includes("you're awesome")) {
-     message.channel.send("Why thank you! <:cheer:737026488301518958>")
-   }
-   else if (message.content.includes("your code") || message.content.includes("Your Code") || message.content.includes("Your code")) {
-     message.channel.send("I'm not sending everything, but here is my help command: ", { files: ["./commands/info/help.js"] })
-   }
-   else{
-    await message.channel.send("I do not respond to that phrase.")
-   }
- }
+    if(message.author.bot || !message.content.startsWith(config.prefix)) return;
   let blacklist = JSON.parse(fs.readFileSync(path.resolve(__dirname, "commands/moderator/blacklist.json")));
   if (!blacklist[message.author.id]) {
   blacklist[message.author.id] = {state: false}

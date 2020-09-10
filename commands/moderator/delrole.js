@@ -7,6 +7,9 @@ module.exports = {
     run: async (client, message, args) => {
 let channel = message.guild.channels.cache.find(c => c.name === "logs")
     var deletename =  args.slice(0).join(' ');
+    if (!message.member.hasPermission("MANAGE_ROLES"))  {
+      return message.reply("You do not have permission to use this command!")
+    }
     deletedrole = message.guild.roles.cache.find(role => role.name === deletename).delete();
     console.log(deletedrole)
     const embed = new Discord.MessageEmbed()

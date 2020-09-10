@@ -1,44 +1,83 @@
-  
-  if (command === "eightball") {
+if (command === "eightball") {
+
     var res = [
+
     "Yes",
+
     "No",
+
     "Maybe",
+
     "Unlikely",
+
     "Of course",
+
     "Ask again later",
+
     "Umm... No",
+
     "Sure why not",
+
     "It is decidedly so",
+
     "Very likely",
+
     "Probably",
+
     "Probably not"
+
   ]
+
   // Runs if user doesn't ask a question
+
   if(!args[0]){
+
     message.channel.send('Please ask a question.')
+
     return;
+
   }
+
   // Creates an ambed and picks a random answer from the answer array
+
     let embed = new Discord.MessageEmbed()
+
     .addField("Question", args)
+
     .addField("Answer", (res[Math.floor(Math.random() * res.length)]))
+
     .setColor('42c2f4')
+
     message.channel.send(embed)
+
     return console.log(`> 8ball command used by ${message.author.username}`);
+
   // Displays a message in the console if the command was used
+
   }
+
   if (command === "delrole") {
+
     let channel = message.guild.channels.cache.find(c => c.name === "logs")
+
     var deletename =  args.slice(0).join(' ');
+
     deletedrole = message.guild.roles.cache.find(role => role.name === deletename).delete();
+
     console.log(deletedrole)
+
     const embed = new Discord.MessageEmbed()
+
       .setAuthor(`Role deleted successfully`)
+
       .setFooter("Powered by Ice Bot")
+
       .setColor("GREEN")
+
       .setDescription(`${message.author} deleted the role ${deletename}.`)
+
     await message.channel.send(embed)
+
     await channel.send(embed)
+
   }
-  

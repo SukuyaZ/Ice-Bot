@@ -20,7 +20,10 @@ module.exports = {
                 { name: "Rule 5: ", value: "No finding loopholes in rules", inline: true },
                 { name: "Rule 6: ", value: "Sending/Linking any harmful material such as viruses or harmware results in an immediate ban.", inline: true },
                 { name: "Rule 7: ", value: "Do not post graphic pictures of minors (<18yo).", inline: true },
-                { name: "Rule 8: ", value: "Staff/admins have final say in all disputes. Do NOT argue with punishments given. Doing so will result in a ban/kick.", inline: true }
+                { name: "Rule 8: ", value: "Staff/admins have final say in all disputes. Do NOT argue with punishments given. Doing so will result in a ban/kick.", inline: true },
+                { name: "Rule 9: ", value: "Please no DM spamming. Doing so will result in a mute, then ban/kick.", inline: true },
+                { name: "Rule 10: ", value: "NO BEGGING FOR ROLES", inline: true }
+            
             )
             await message.channel.send(rulesEmbed)
     }

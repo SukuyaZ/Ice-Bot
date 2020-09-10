@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const fs = require('fs');
-const { truncate } = require("fs/promises");
+const { truncate } = require("fs");
 module.exports = {
   name: "blacklist",
   usage: "blacklist <userid>",
