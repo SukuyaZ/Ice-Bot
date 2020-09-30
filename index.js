@@ -2,8 +2,8 @@
 const Discord = require("discord.js");
 const config = require("./config.json");
 const ms = require('ms');
-const fs = require('fs');
-const MusicClient = require('/home/nosnowowie/Ice-Bot/src/struct/Client.js');
+const fs = require('fs')
+const MusicClient = require('/storage/emulated/0/Download/Ice-Bot/src/struct/Client.js');
 const { Collection } = require('discord.js');
 const client = new MusicClient({ token: config.token, prefix: config.prefix });
 const path = require("path");
@@ -87,6 +87,7 @@ client.on("ready", () => {
     "helping pink fix his bots",
     "Terrabot is amazing",
     "Hello World!",
+    "Why am I here",
     "Not as Good as Ruby :(",
     "generating command ideas",
     "with the developers console",
@@ -122,7 +123,7 @@ client.once('reconnecting', () => {
  client.once('disconnect', () => {
   console.log('Disconnect!');
  });
-
+process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
