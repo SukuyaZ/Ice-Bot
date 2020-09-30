@@ -33,6 +33,7 @@ module.exports = {
 	description: "info about user",
 	usage: "userinfo <user>",
 	category: "info",
+	guildOnly: true,
 	run: async (client, message, args) => {
     let id = args[0]
 	const member = message.mentions.members.last() || message.guild.members.cache.get(id) || message.member;

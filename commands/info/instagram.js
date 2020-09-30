@@ -34,7 +34,6 @@ module.exports = {
             .setColor("RANDOM")
             .setTitle(account.full_name)
             .setURL(`https://instagram.com/${name}`)
-            .setThumbnail(account.profile_pic_url_hd)
             .addField("Profile information", stripIndents`**- Username:** ${account.username}
             **- Full name:** ${account.full_name}
             **- Biography:** ${account.biography.length == 0 ? "none" : account.biography}

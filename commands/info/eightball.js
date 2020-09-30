@@ -25,11 +25,8 @@ module.exports = {
     return;
   }
   // Creates an ambed and picks a random answer from the answer array
-    let embed = new Discord.MessageEmbed()
-    .addField("Question", args)
-    .addField("Answer", (res[Math.floor(Math.random() * res.length)]))
-    .setColor('42c2f4')
-    message.channel.send(embed)
+    await message.channel.send("Question: " + args.toString())
+    await message.channel.send("Answer: " + (res[Math.floor(Math.random() * res.length)]))
     return console.log(`> 8ball command used by ${message.author.username}`);
   // Displays a message in the console if the command was used
   }
