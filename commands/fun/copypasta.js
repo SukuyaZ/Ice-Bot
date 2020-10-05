@@ -1,4 +1,4 @@
-const copypastas = require("/storage/emulated/0/Download/Ice-Bot/data/copypastas.json")
+const copypastas = require("C:/Users/owenr/Desktop/Ice-Bot/data/copypastas.json")
 module.exports = {
     name: "copypasta",
     category: "fun",

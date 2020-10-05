@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const fights = require('/storage/emulated/0/Download/Ice-Bot/data/fights.json');
+const fights = require('C:/Users/owenr/Desktop/Ice-Bot/data/fights.json');
 
 module.exports = {
 	name: "fight",
