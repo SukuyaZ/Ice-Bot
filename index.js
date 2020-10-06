@@ -1,11 +1,12 @@
 // Load up the discord.js library
-const Discord = require("discord.js");
+const Intents = require("discord.js");
 const config = require("./config.json");
 const ms = require('ms');
 const fs = require('fs')
 const MusicClient = require('C:/Users/owenr/Desktop/Ice-Bot/src/struct/Client.js');
 const { Collection } = require('discord.js');
-const client = new MusicClient({ token: config.token, prefix: config.prefix });
+const Discord = require("discord.js")
+const client = new MusicClient({ ws: { intents: Intents.ALL }, token: config.token, prefix: config.prefix });
 const path = require("path");
 const moment = require('moment');
 const os = require('os');
