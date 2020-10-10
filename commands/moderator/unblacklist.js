@@ -4,7 +4,7 @@ module.exports = {
     name: 'unblacklist',
     description: 'un-blacklist a user.',
     usage: 'unblacklist [userid]',
-    category: 'moderator',
+    category: 'owner',
     run: async (client, message, args) => {
         let blacklist = JSON.parse(fs.readFileSync("commands/moderator/blacklist.json", "utf8"));
         let user = args[0];

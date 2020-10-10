@@ -2,6 +2,7 @@ module.exports = {
 	name: 'resume',
 	description: 'Resume command.',
 	cooldown: 5,
+	category: "Music",
 	run: async (client, message, args) => {
 		const serverQueue = message.client.queue.get(message.guild.id);
 		if (serverQueue && !serverQueue.playing) {

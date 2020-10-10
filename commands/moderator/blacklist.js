@@ -5,7 +5,7 @@ module.exports = {
   name: "blacklist",
   usage: "blacklist <userid>",
   description: "blacklist a user from the bot!",
-  category: "moderator",
+  category: "owner",
   run: async (client, message, args) => {
     if (message.author.id !== '466778567905116170') return message.reply("This command can only be used by the owner... :facepalm:");
       //message.delete();

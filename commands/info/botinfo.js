@@ -1,36 +1,47 @@
-const os = require('os')
-const ms = require("ms")
-const Discord = require("discord.js")
-module.exports = {
-  name: "botinfo",
-  category: 'info',
-  usage: "botinfo",
-  description: "info about bot",
-  run: async (client, message, args) => {
-        const core = os.cpus()[0];
-    const embed = new Discord.MessageEmbed()
-      .setThumbnail(client.user.displayAvatarURL())
-      .setColor(message.guild.me.displayHexColor || 'BLUE')
-      .addField('General', [
-        `**❯ Client:** ${client.user.tag} (${client.user.id})`,
-        `**❯ Servers:** ${client.guilds.cache.size.toLocaleString()} `,
-        `**❯ Users:** ${client.guilds.cache.reduce((a, b) => a + b.memberCount, 0).toLocaleString()}`,
-        `**❯ Channels:** ${client.channels.cache.size.toLocaleString()}`,
-        `**❯ Creation Date:** ${client.user.createdTimestamp}`,
-        `**❯ Node.js:** ${process.version}`,
-        '\u200b'
-      ])
-      .addField('System', [
-        `**❯ Platform:** ${process.platform}`,
-        `**❯ Uptime:** ${ms(os.uptime() * 1000, { long: true })}`,
-        `**❯ CPU:**`,
-        `\u3000 Cores: ${os.cpus().length}`,
-        `\u3000 Model: ${core.model}`,
-        `\u3000 Speed: ${core.speed}MHz`,
-        
-      ])
-      .setTimestamp();
+const Discord = require('discord.js')
+const fs = require('fs');
+const osutils = require('os-utils');
 
-    message.channel.send(embed);
-  }
+module.exports = {
+    name: "botinfo",
+    category: "info",
+    description: "Info about the bot",
+    run: async (client, message, args) => {
+var milliseconds = parseInt((client.uptime % 1000) / 100),
+  seconds = parseInt((client.uptime / 1000) % 60),
+  minutes = parseInt((client.uptime / (1000 * 60)) % 60),
+  hours = parseInt((client.uptime / (1000 * 60 * 60)) % 24);
+  days = parseInt((client.uptime / (1000 * 60 * 60 * 24)) % 60);
+  days = (days < 10) ? "0" + days : days;
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+osutils.cpuUsage(function(v) {
+    const embed = new Discord.MessageEmbed()
+    .setColor(0x7289DA)
+    .setThumbnail(client.user.avatarURL({ format: 'png', dynamic: true, size: 2048 }))
+    .setURL(client.user.avatarURL({ format: 'png', dynamic: true, size: 2048 }))
+    .setTimestamp()
+    .addField("Ice Bot", "Show the bot's stats.")
+    .addField("-------------------------------------------------------------------------------","----------------------------------------------------------------------------")
+    .addField("Prefix", "#", true)
+    .addField("Total Commands", `${client.commands.size} commands`, true)
+    .addField("Total Servers", `${client.guilds.cache.size}`, true)
+    .addField("Total Channels", `${client.channels.cache.size}`, true)
+    .addField("Total Users", `${client.users.cache.size}`, true)
+    .addField("Library", "Discord.js v12", true)
+    .addField("-------------------------------------------------------------------------------","----------------------------------------------------------------------------")
+    .addField("Platform", osutils.platform(),true)
+    .addField("VPS CPU Cores", osutils.cpuCount() + " Cores",true)
+    .addField("CPU Usage", `${(v * 100).toString().split(".")[0] + "." + (v * 100).toString().split(".")[1].split('')[0] + (v * 100).toString().split(".")[1].split('')[1]}%`,true)
+    .addField("Total Memory", osutils.totalmem().toString().split(".")[0] + "." + osutils.totalmem().toString().split(".")[1].split('')[0] + osutils.totalmem().toString().split(".")[1].split('')[1] + "MB",true)
+    .addField("RAM Usage Of VPS", `${(osutils.totalmem() - osutils.freemem()).toString().split(".")[0] + "." + ( osutils.totalmem() - osutils.freemem()).toString().split(".")[1].split('')[0] + (osutils.totalmem() - osutils.freemem()).toString().split(".")[1].split('')[1]}/${osutils.totalmem().toString().split(".")[0] + "." + osutils.totalmem().toString().split(".")[1].split('')[0] + osutils.totalmem().toString().split(".")[1].split('')[1]}MB`,true)
+    .addField("RAM Usage Of Bot", (process.memoryUsage().heapUsed / 1024 / 1024 ).toFixed(2) + "MB/" + osutils.totalmem().toString().split(".")[0] + "." + osutils.totalmem().toString().split(".")[1].split('')[0] + osutils.totalmem().toString().split(".")[1].split('')[1] + "MB",true)
+    .addField("RAM Usage Of VPS %", `${(100 - osutils.freememPercentage() * 100).toString().split(".")[0] + "." + (100 - osutils.freememPercentage() * 100).toString().split(".")[1].split('')[0] + (100 - osutils.freememPercentage() * 100).toString().split(".")[1].split('')[1]}%`,true)
+    .addField("Ping", Math.round(client.ws.ping) + "ms", true)
+    .addField("Uptime", days + "d " + hours + "h " + minutes + "m " + seconds + "." + milliseconds + "s", true)
+    message.channel.send({embed});
+  })
+}
 }
